@@ -2,7 +2,7 @@ name: Growth Pulse
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -17,10 +17,12 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install SDK from npm
+      - name: Install and Check SDK (15x)
         working-directory: ./growth-bot
-        run: npm install --prefer-online --no-package-lock
-
-      - name: Run growth bot smoke check
-        working-directory: ./growth-bot
-        run: npm run start
+        run: |
+          for i in {1..15}; do
+            echo "--- Execution $i/15 ---"
+            rm -rf node_modules
+            npm install --prefer-online --no-package-lock
+            npm run start
+          done
